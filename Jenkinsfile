@@ -18,8 +18,8 @@ pipeline {
         stage('Build') {
             steps {
                 sh "go build -o $BIN_NAME ."
-                sh "mkdir -p $DOCKER_BUILD_PATH"
-                sh "cp -r * $DOCKER_BUILD_PATH"
+                sh "sudo mkdir -p $DOCKER_BUILD_PATH"
+                sh "sudo cp -r * $DOCKER_BUILD_PATH"
             }
         }
 
