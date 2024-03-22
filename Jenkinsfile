@@ -10,9 +10,9 @@ pipeline {
         registry = "afeez511/http-ehco"
         registryCredential = "dockerhub"  
         BIN_NAME = "http-echo"
-        TARGETOS = "linux"
-        TARGETARCH = "amd64"
-        DOCKER_BUILD_PATH =  "/dist/$TARGETOS/$TARGETARCH/$BIN_NAME"
+        // TARGETOS = "linux"
+        // TARGETARCH = "amd64"
+        // DOCKER_BUILD_PATH =  "/dist/$TARGETOS/$TARGETARCH/$BIN_NAME"
     }
     
     stages {
