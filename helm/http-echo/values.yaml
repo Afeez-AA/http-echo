@@ -110,12 +110,10 @@
 
 replicaCount: 1
 image:
-  repository: "afeez511/http-echo"
-  tag: latest
+  repository: ""
+  tag: ""
 
-service:
-  port: 5678
 
-appName: "http-echo"
+appName: ""
 
 
