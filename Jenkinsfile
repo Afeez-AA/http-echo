@@ -10,6 +10,8 @@ pipeline {
         registry = "afeez511/http-ehco"
         registryCredential = "dockerhub"  
         BIN_NAME = "http-echo"
+        TARGETOS = "linux"
+        TARGETARCH = "amd64"
         DOCKER_BUILD_PATH =  "/dist/$TARGETOS/$TARGETARCH/$BIN_NAME"
     }
     
@@ -18,8 +20,8 @@ pipeline {
         stage('Build') {
             steps {
                 sh "go build -o $BIN_NAME ."
-                sh "sudo mkdir -p $DOCKER_BUILD_PATH"
-                sh "sudo cp -r * $DOCKER_BUILD_PATH"
+                sh "mkdir -p $DOCKER_BUILD_PATH"
+                sh "cp -r * $DOCKER_BUILD_PATH"
             }
         }
 
