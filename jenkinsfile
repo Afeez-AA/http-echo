@@ -3,7 +3,7 @@ pipeline {
     agent any
 
 	tools {
-        go 'go-1.22.1'
+        go 'go1.22.1'
     }
     
     // environment {
@@ -12,7 +12,7 @@ pipeline {
     // }
     
     stages {
-        
+
         stage('Build') {
             steps {
                 sh 'go build ./'
