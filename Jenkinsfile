@@ -8,7 +8,7 @@ pipeline {
     
     environment {
         registry = "afeez511/http-ehco"
-        registryCredential = "dockerhub"
+        registryCredential = "dockerhub"   
     }
     
     stages {
