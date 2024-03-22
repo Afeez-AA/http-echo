@@ -17,13 +17,13 @@ pipeline {
     
     stages {
 
-        // stage('Build') {
-        //     steps {
-        //         sh "go build -o $BIN_NAME ."
-        //         sh "mkdir -p $DOCKER_BUILD_PATH"
-        //         sh "cp -r * $DOCKER_BUILD_PATH"
-        //     }
-        // }
+        stage('Build') {
+            steps {
+                sh "go build -o $BIN_NAME ."
+                // sh "mkdir -p $DOCKER_BUILD_PATH"
+                // sh "cp -r * $DOCKER_BUILD_PATH"
+            }
+        }
 
         stage('Build DockerApp Image') {
           steps {

@@ -32,8 +32,6 @@ WORKDIR /app
 
 COPY . .
 
-RUN go build -o http-echo
-
 EXPOSE 5678/tcp
 
 ENV ECHO_TEXT="hello-world"
