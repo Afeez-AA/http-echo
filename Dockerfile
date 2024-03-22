@@ -16,7 +16,8 @@ LABEL name="http-echo" \
       release=$PRODUCT_VERSION \
       summary="A test webserver that echos a response. You know, for kids." 
 
-COPY . /
+
+COPY dist/$TARGETOS/$TARGETARCH/$BIN_NAME /
 
 EXPOSE 5678/tcp
 

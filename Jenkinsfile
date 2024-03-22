@@ -8,22 +8,33 @@ pipeline {
     
     environment {
         registry = "afeez511/http-ehco"
-        registryCredential = "dockerhub"   
+        registryCredential = "dockerhub"  
+        BIN_NAME = "http-echo"
+        DOCKER_BUILD_PATH =  "/dist/$TARGETOS/$TARGETARCH/$BIN_NAME"
     }
     
     stages {
 
         stage('Build') {
             steps {
-                sh 'go build -o http-echo .'
+                sh "go build -o $BIN_NAME ."
             }
-        }
+        
 
+            steps {
+              sh "mkdir -p $DOCKER_BUILD_PATH"
+            }
+
+            steps {
+              sh "cp -r * $DOCKER_BUILD_PATH"
+            }
+        
+        }
 
         stage('Build DockerApp Image') {
           steps {
             script {
-              dockerImage = docker.build registry + ":V$BUILD_NUMBER"
+              dockerImage = docker.build registry + ":V$BUILD_NUMBER", "--build-arg BIN_NAME=${BIN_NAME}", "--build-arg DOCKER_BUILD_PATH=${DOCKER_BUILD_PATH}"
             }
           }
         }
