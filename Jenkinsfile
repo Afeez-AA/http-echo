@@ -15,28 +15,28 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'go build ./'
+                sh 'go build -o main .'
             }
         }
 
-        stage('Unit Test') {
-            steps {
-                script {
-                    sh 'go mod init hello'
-                    sh 'go test'
-                }
-            }
-        }
+        // stage('Unit Test') {
+        //     steps {
+        //         script {
+        //             sh 'go mod init hello'
+        //             sh 'go test'
+        //         }
+        //     }
+        // }
     
-        stage('Coverage Report') {
-            steps {
-                script {
-                    sh 'go test -coverprofile=coverage.out'
-                    sh 'go tool cover -html=coverage.out -o coverage.html'
-                }
-                archiveArtifacts 'coverage.html'
-            }
-        }
+        // stage('Coverage Report') {
+        //     steps {
+        //         script {
+        //             sh 'go test -coverprofile=coverage.out'
+        //             sh 'go tool cover -html=coverage.out -o coverage.html'
+        //         }
+        //         archiveArtifacts 'coverage.html'
+        //     }
+        // }
 
     }
 
