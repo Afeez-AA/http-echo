@@ -17,18 +17,18 @@ pipeline {
     
     stages {
 
-        stage('Build') {
-            steps {
-                sh "go build -o $BIN_NAME ."
-                sh "mkdir -p $DOCKER_BUILD_PATH"
-                sh "cp -r * $DOCKER_BUILD_PATH"
-            }
-        }
+        // stage('Build') {
+        //     steps {
+        //         sh "go build -o $BIN_NAME ."
+        //         sh "mkdir -p $DOCKER_BUILD_PATH"
+        //         sh "cp -r * $DOCKER_BUILD_PATH"
+        //     }
+        // }
 
         stage('Build DockerApp Image') {
           steps {
             script {
-              dockerImage = docker.build registry + ":V$BUILD_NUMBER", "--build-arg BIN_NAME=${BIN_NAME}", "--build-arg DOCKER_BUILD_PATH=${DOCKER_BUILD_PATH}"
+              dockerImage = docker.build registry + ":V$BUILD_NUMBER" // , "--build-arg BIN_NAME=${BIN_NAME}", "--build-arg DOCKER_BUILD_PATH=${DOCKER_BUILD_PATH}"
             }
           }
         }
