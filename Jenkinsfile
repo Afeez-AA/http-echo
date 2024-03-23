@@ -53,7 +53,7 @@ pipeline {
         stage('Kubernetes Deploy') {
           agent {label 'KOPS'}
             steps {
-              sh "helm upgrade --install --force ${BIN_NAME} helm/http-echo --set appimage=${registry}:V${BUILD_NUMBER} --namespace prod"
+              sh "helm upgrade --install --force ${BIN_NAME} helm/http-echo --set appimage=${registry}:V${BUILD_NUMBER}"
             }
         }
 
