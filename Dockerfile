@@ -34,7 +34,7 @@ COPY . .
 
 EXPOSE 5678/tcp
 
-ENV ECHO_TEXT="hello-world"
+ENV ECHO_TEXT="It worked at 1:04am using ci-cd, testing!!!!!!!! Gotta sleep now"
 
 ENTRYPOINT ["/app/http-echo"]
 
