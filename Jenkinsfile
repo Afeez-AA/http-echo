@@ -10,7 +10,9 @@ pipeline {
         registry = "afeez511/http-ehco"
         registryCredential = "dockerhub"  
         BIN_NAME = "http-echo"
-    
+        // TARGETOS = "linux"
+        // TARGETARCH = "amd64"
+        // DOCKER_BUILD_PATH =  "/dist/$TARGETOS/$TARGETARCH/$BIN_NAME"
     }
     
     stages {
@@ -18,13 +20,15 @@ pipeline {
         stage('Build') {
             steps {
                 sh "go build -o $BIN_NAME ."
+                // sh "mkdir -p $DOCKER_BUILD_PATH"
+                // sh "cp -r * $DOCKER_BUILD_PATH"
             }
         }
 
         stage('Build DockerApp Image') {
           steps {
             script {
-              dockerImage = docker.build registry + ":V$BUILD_NUMBER" 
+              dockerImage = docker.build registry + ":V$BUILD_NUMBER" // , "--build-arg BIN_NAME=${BIN_NAME}", "--build-arg DOCKER_BUILD_PATH=${DOCKER_BUILD_PATH}"
             }
           }
         }
@@ -47,6 +51,7 @@ pipeline {
         }
 
         stage('Kubernetes Deploy') {
+         // agent {label 'KOPS'}
             steps {
               sh "helm upgrade --install --force ${BIN_NAME} helm/http-echo --set appimage=${registry}:V${BUILD_NUMBER}"
             }
