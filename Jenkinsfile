@@ -100,13 +100,13 @@ pipeline {
         //   }
         // }
 
-        stage('Prometheus via helm') {
-          steps{
-            sh "helm repo add prometheus-community https://prometheus-community.github.io/helm-charts"
-            sh "helm repo update"
-            sh "helm install prometheus prometheus-community/prometheus"
-          }
-        }
+        // stage('Prometheus via helm') {
+        //   steps{
+        //     sh "helm repo add prometheus-community https://prometheus-community.github.io/helm-charts"
+        //     sh "helm repo update"
+        //     sh "helm install prometheus prometheus-community/prometheus"
+        //   }
+        // }
 
         stage('Grafana via helm') {
           steps{
