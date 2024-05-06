@@ -112,7 +112,7 @@ pipeline {
           steps{
             sh "helm repo add grafana https://grafana.github.io/helm-charts"
             sh "helm repo update"
-            sh "helm install grafana stable/grafana"
+            sh "helm upgrade --install --force grafana grafana/grafana"
           }
         }
 
