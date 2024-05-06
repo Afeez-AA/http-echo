@@ -34,7 +34,7 @@ COPY . .
 
 EXPOSE 5678/tcp
 
-ENV ECHO_TEXT="I am afeez, today is May 5th, 2024"
+ENV ECHO_TEXT="TEST AT 3:20PM"
 
 ENTRYPOINT ["/app/http-echo"]
 

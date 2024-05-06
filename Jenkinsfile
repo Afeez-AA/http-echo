@@ -10,9 +10,6 @@ pipeline {
         registry = "afeez511/http-ehco"
         registryCredential = "dockerhub"  
         BIN_NAME = "http-echo"
-        // TARGETOS = "linux"
-        // TARGETARCH = "amd64"
-        // DOCKER_BUILD_PATH =  "/dist/$TARGETOS/$TARGETARCH/$BIN_NAME"
     }
     
     stages {
@@ -20,8 +17,6 @@ pipeline {
         stage('Build') {
             steps {
                 sh "go build -o $BIN_NAME ."
-                // sh "mkdir -p $DOCKER_BUILD_PATH"
-                // sh "cp -r * $DOCKER_BUILD_PATH"
             }
         }
 
@@ -57,56 +52,64 @@ pipeline {
             }
         }
         
-        stage('Prometheus via helm') {
-          // steps{
-        //     sh "helm repo add prometheus-community https://prometheus-community.github.io/helm-charts"
-        //     sh "helm repo update"
-        //     sh "helm upgrade --install --force prometheus prometheus-community/prometheus"  
+        stage('Prometheus via helm') { 
           steps {
                 script {
-                                // Check if Prometheus is already installed
-                                def existingPrometheus = sh(script: 'helm list -q | grep -c prometheus', returnStdout: true).trim()
-
-                                if (existingPrometheus == '0') {
-                                    // Prometheus is not installed, deploy it
-                                    sh "helm upgrade --install --force prometheus prometheus-community/prometheus"
-                                } else {
-                                    // Prometheus is already installed, skip deployment
-                                    echo "Prometheus is already installed, skipping deployment."
-                                }
-                            }
-                        }
-            }
+                   // Check if Prometheus is already installed
+                   def existingPrometheus = sh(script: 'helm list -q | grep -c prometheus', returnStdout: true).
+                   if (existingPrometheus == '0') {
+                       // Prometheus is not installed, deploy it
+                       sh "helm upgrade --install --force prometheus prometheus-community/prometheus"
+                   } else {
+                       // Prometheus is already installed, skip deployment
+                       echo "Prometheus is already installed, skipping deployment."
+                   }
+                }
+          }
+        }
 
 
         stage('Grafana via helm') {
-          steps{
-            sh "helm repo add grafana https://grafana.github.io/helm-charts"
-            sh "helm repo update"
-            sh "helm upgrade --install --force grafana grafana/grafana"
+          steps {
+                script {
+                    // Check if Grafana is already installed
+                    def existingGrafana = sh(script: 'helm list -q | grep -c grafana', returnStdout: true).trim()
+
+                    if (existingGrafana == '0') {
+                        // Grafana is not installed, deploy it
+                        sh "helm repo add grafana https://grafana.github.io/helm-charts"
+                        sh "helm repo update"
+                        sh "helm upgrade --install --force grafana grafana/grafana"
+                    } else {
+                        // Grafana is already installed, skip deployment
+                        echo "Grafana is already installed, skipping deployment."
+                    }
+                }
           }
-
         }
 
-        stage("Temporary Service expose") {
-          steps {     
-              sh "kubectl expose service prometheus-server --type=NodePort --target-port=9090 --name=prometheus-server-ext"
-              sh "kubectl expose service grafana --type=NodePort --target-port=3000 --name=grafana-ext"              
+        stage("Ingress-controller via Helm") {
+            steps {
+                script {
+                    dir('lets-Encrpt') {
+                        sh "helm repo add nginx-stable https://helm.nginx.com/stable"
+                        sh "helm repo update"
+                        sh "helm install nginx-ingress nginx-stable/nginx-ingress --set rbac.create=true --values values.yaml"
+                    }
+                }
             }
-
         }
-
-        // stage("Ingress-controller via Helm") {
-        //     steps {
-        //         script {
-        //             dir('lets-Encrpt') {
-        //                 sh "helm repo add nginx-stable https://helm.nginx.com/stable"
-        //                 sh "helm repo update"
-        //                 sh "helm install nginx-ingress nginx-stable/nginx-ingress --set rbac.create=true --values values.yaml"
-        //             }
-        //         }
-        //     }
-        // }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     }
 
 }
