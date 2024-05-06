@@ -54,7 +54,6 @@ This project uses the following technologies:
 
 
 
-## Steps
 
 ## Steps
 
