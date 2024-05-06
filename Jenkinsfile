@@ -58,12 +58,26 @@ pipeline {
         }
         
         stage('Prometheus via helm') {
-          steps{
-            sh "helm repo add prometheus-community https://prometheus-community.github.io/helm-charts"
-            sh "helm repo update"
-            sh "helm upgrade --install --force prometheus prometheus-community/prometheus"
-          }
-        }
+          // steps{
+        //     sh "helm repo add prometheus-community https://prometheus-community.github.io/helm-charts"
+        //     sh "helm repo update"
+        //     sh "helm upgrade --install --force prometheus prometheus-community/prometheus"  
+          steps {
+                script {
+                                // Check if Prometheus is already installed
+                                def existingPrometheus = sh(script: 'helm list -q | grep -c prometheus', returnStdout: true).trim()
+
+                                if (existingPrometheus == '0') {
+                                    // Prometheus is not installed, deploy it
+                                    sh "helm upgrade --install --force prometheus prometheus-community/prometheus"
+                                } else {
+                                    // Prometheus is already installed, skip deployment
+                                    echo "Prometheus is already installed, skipping deployment."
+                                }
+                            }
+                        }
+            }
+
 
         stage('Grafana via helm') {
           steps{
@@ -98,7 +112,6 @@ pipeline {
 }
 
        
-
 
 
 
