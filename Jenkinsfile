@@ -10,6 +10,9 @@ pipeline {
         registry = "afeez511/http-ehco"
         registryCredential = "dockerhub"  
         BIN_NAME = "http-echo"
+        AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY_ID')
+        AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
+        AWS_DEFAULT_REGION = "us-east-1"    
     }
     
     stages {
@@ -99,22 +102,50 @@ pipeline {
                 }
             }
         }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
+        stage("Expose Services via Nginx-Ingress Controller") {
+            steps {
+                script {
+                    dir('lets-Encrpt') {
+                        sh "kubectl apply -f ingress-app.yaml"
+                        sh "kubectl apply -f ingress-resource-grafana.yaml"
+                        sh "kubectl apply -f ingress-resource-prometheus.yaml"
+                    }
+                }
+            }  
+        }
+
+        stage("Secure Ingress with Cert-Manger") {
+            steps {
+                script {
+                    dir('lets-Encrpt') {
+                        sh "kubectl create namespace cert-manager"
+                        sh "helm repo add jetstack https://charts.jetstack.io"
+                        sh "helm repo update"
+                        sh "helm install cert-manager jetstack/cert-manager --namespace cert-manager --version v1.10.1 --set installCRDs=true"
+                        sh "kubectl apply -f route53-secret.yaml"
+                        sh "kubectl apply -f production_issuer.yaml"
+                        sh "kubectl apply -f cert_request.yaml"
+                    }
+                }
+            }  
+        }
+
+        stage("Reapply ingress") {
+            steps {
+                script {
+                    dir('lets-Encrpt') {
+                        sh "kubectl apply -f ingress-app.yaml"
+                        sh "kubectl apply -f ingress-resource-grafana.yaml"
+                        sh "kubectl apply -f ingress-resource-prometheus.yaml"
+                    }
+                }
+            }  
+        }
     }
-
+        
+   
 }
-
-       
 
 
 
