@@ -116,24 +116,24 @@ pipeline {
           }
         }
 
-        stage('Grafana via helm') {
-          steps {
-                script {
-                    // Check if Grafana is already installed
-                    def existingGrafana = sh(script: 'helm list -q | grep -c grafana', returnStdout: true).trim()
+        // stage('Grafana via helm') {
+        //   steps {
+        //         script {
+        //             // Check if Grafana is already installed
+        //             def existingGrafana = sh(script: 'helm list -q | grep -c grafana', returnStdout: true).trim()
 
-                    if (existingGrafana == '0') {
-                        // Grafana is not installed, deploy it
-                        sh "helm repo add grafana https://grafana.github.io/helm-charts"
-                        sh "helm repo update"
-                        sh "helm upgrade --install --force grafana grafana/grafana"
-                    } else {
-                        // Grafana is already installed, skip deployment
-                        echo "Grafana is already installed, skipping deployment."
-                    }
-                }
-          }
-        }
+        //             if (existingGrafana == '0') {
+        //                 // Grafana is not installed, deploy it
+        //                 sh "helm repo add grafana https://grafana.github.io/helm-charts"
+        //                 sh "helm repo update"
+        //                 sh "helm upgrade --install --force grafana grafana/grafana"
+        //             } else {
+        //                 // Grafana is already installed, skip deployment
+        //                 echo "Grafana is already installed, skipping deployment."
+        //             }
+        //         }
+        //   }
+        // }
 
         stage("Ingress-controller via Helm") {
             steps {
