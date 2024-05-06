@@ -61,7 +61,7 @@ pipeline {
           steps{
             sh "helm repo add prometheus-community https://prometheus-community.github.io/helm-charts"
             sh "helm repo update"
-            sh "helm install prometheus prometheus-community/prometheus"
+            sh "helm upgrade --install --force prometheus prometheus-community/prometheus"
           }
         }
 
@@ -69,7 +69,7 @@ pipeline {
           steps{
             sh "helm repo add grafana https://grafana.github.io/helm-charts"
             sh "helm repo update"
-            sh "helm install grafana grafana/grafana"
+            sh "helm upgrade --install --force grafana grafana/grafana"
           }
 
         }
