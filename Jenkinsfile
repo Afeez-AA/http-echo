@@ -9,10 +9,7 @@ pipeline {
     environment {
         registry = "afeez511/http-ehco"
         registryCredential = "dockerhub"  
-        BIN_NAME = "http-echo"
-        AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY_ID')
-        AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
-        AWS_DEFAULT_REGION = "us-east-1"    
+        BIN_NAME = "http-echo"  
     }
     
     stages {
@@ -55,20 +52,32 @@ pipeline {
             }
         }
         
-        stage('Prometheus via helm') { 
-          steps {
+        // stage('Prometheus via helm') { 
+        //   steps {
+        //         script {
+        //            // Check if Prometheus is already installed
+        //            def existingPrometheus = sh(script: 'helm list -q | grep -c prometheus', returnStdout: true).
+        //            if (existingPrometheus == '0') {
+        //                // Prometheus is not installed, deploy it
+        //                sh "helm upgrade --install --force prometheus prometheus-community/prometheus"
+        //            } else {
+        //                // Prometheus is already installed, skip deployment
+        //                echo "Prometheus is already installed, skipping deployment."
+        //            }
+        //         }
+        //   }
+        // }
+        stage('Prometheus via helm') {
+            steps {
                 script {
-                   // Check if Prometheus is already installed
-                   def existingPrometheus = sh(script: 'helm list -q | grep -c prometheus', returnStdout: true).
-                   if (existingPrometheus == '0') {
-                       // Prometheus is not installed, deploy it
-                       sh "helm upgrade --install --force prometheus prometheus-community/prometheus"
-                   } else {
-                       // Prometheus is already installed, skip deployment
-                       echo "Prometheus is already installed, skipping deployment."
-                   }
+                    def existingPrometheus = sh(script: 'helm list -q | grep -c prometheus', returnStdout: true).trim()
+                    if (existingPrometheus == '0') {
+                        sh "helm upgrade --install --force prometheus prometheus-community/prometheus"
+                    } else {
+                        echo "Prometheus is already installed, skipping deployment."
+                    }
                 }
-          }
+            }
         }
 
 
