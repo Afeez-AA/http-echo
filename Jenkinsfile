@@ -51,8 +51,84 @@ pipeline {
               sh "helm upgrade --install --force ${BIN_NAME} helm/http-echo --set appimage=${registry}:V${BUILD_NUMBER}"
             }
         }
+
+
+        stage('Prometheus via helm') {
+          steps{
+            sh "helm repo add prometheus-community https://prometheus-community.github.io/helm-charts"
+            sh "helm repo update"
+            sh "helm install prometheus prometheus-community/prometheus"
+          }
+        }
+
+        stage('Grafana via helm') {
+          steps{
+            sh "helm repo add grafana https://grafana.github.io/helm-charts"
+            sh "helm repo update"
+            sh "helm upgrade --install --force grafana grafana/grafana"
+          }
+        }
         
-    //     // stage('Prometheus via helm') { 
+   
+        stage("Ingress-controller via Helm") {
+            steps {
+                script {
+                    dir('lets-Encrpt') {
+                        sh "helm repo add nginx-stable https://helm.nginx.com/stable"
+                        sh "helm repo update"
+                        sh "helm install nginx-ingress nginx-stable/nginx-ingress --set rbac.create=true --values values.yaml"
+                    }
+                }
+            }
+        }
+
+        stage("Expose Services via Nginx-Ingress Controller") {
+            steps {
+                script {
+                    dir('lets-Encrpt') {
+                        sh "kubectl apply -f ingress-app.yaml"
+                        sh "kubectl apply -f ingress-resource-grafana.yaml"
+                        sh "kubectl apply -f ingress-resource-prometheus.yaml"
+                    }
+                }
+            }  
+        }
+
+    //     stage("Secure Ingress with Cert-Manger") {
+    //         steps {
+    //             script {
+    //                 dir('lets-Encrpt') {
+    //                     sh "kubectl create namespace cert-manager"
+    //                     sh "helm repo add jetstack https://charts.jetstack.io"
+    //                     sh "helm repo update"
+    //                     sh "helm install cert-manager jetstack/cert-manager --namespace cert-manager --version v1.10.1 --set installCRDs=true"
+    //                     sh "kubectl apply -f route53-secret.yaml"
+    //                     sh "kubectl apply -f production_issuer.yaml"
+    //                     sh "kubectl apply -f cert_request.yaml"
+    //                 }
+    //             }
+    //         }  
+    //     }
+
+    //     stage("Reapply ingress") {
+    //         steps {
+    //             script {
+    //                 dir('lets-Encrpt') {
+    //                     sh "kubectl apply -f ingress-app.yaml"
+    //                     sh "kubectl apply -f ingress-resource-grafana.yaml"
+    //                     sh "kubectl apply -f ingress-resource-prometheus.yaml"
+    //                 }
+    //             }
+    //         }  
+    //     }
+    }
+        
+   
+}
+
+
+
+ //     // stage('Prometheus via helm') { 
     //     //   steps {
     //     //         script {
     //     //            // Check if Prometheus is already installed
@@ -134,62 +210,6 @@ pipeline {
     //     //         }
     //     //   }
     //     // }
-
-    //     stage("Ingress-controller via Helm") {
-    //         steps {
-    //             script {
-    //                 dir('lets-Encrpt') {
-    //                     sh "helm repo add nginx-stable https://helm.nginx.com/stable"
-    //                     sh "helm repo update"
-    //                     sh "helm install nginx-ingress nginx-stable/nginx-ingress --set rbac.create=true --values values.yaml"
-    //                 }
-    //             }
-    //         }
-    //     }
-
-    //     stage("Expose Services via Nginx-Ingress Controller") {
-    //         steps {
-    //             script {
-    //                 dir('lets-Encrpt') {
-    //                     sh "kubectl apply -f ingress-app.yaml"
-    //                     sh "kubectl apply -f ingress-resource-grafana.yaml"
-    //                     sh "kubectl apply -f ingress-resource-prometheus.yaml"
-    //                 }
-    //             }
-    //         }  
-    //     }
-
-    //     stage("Secure Ingress with Cert-Manger") {
-    //         steps {
-    //             script {
-    //                 dir('lets-Encrpt') {
-    //                     sh "kubectl create namespace cert-manager"
-    //                     sh "helm repo add jetstack https://charts.jetstack.io"
-    //                     sh "helm repo update"
-    //                     sh "helm install cert-manager jetstack/cert-manager --namespace cert-manager --version v1.10.1 --set installCRDs=true"
-    //                     sh "kubectl apply -f route53-secret.yaml"
-    //                     sh "kubectl apply -f production_issuer.yaml"
-    //                     sh "kubectl apply -f cert_request.yaml"
-    //                 }
-    //             }
-    //         }  
-    //     }
-
-    //     stage("Reapply ingress") {
-    //         steps {
-    //             script {
-    //                 dir('lets-Encrpt') {
-    //                     sh "kubectl apply -f ingress-app.yaml"
-    //                     sh "kubectl apply -f ingress-resource-grafana.yaml"
-    //                     sh "kubectl apply -f ingress-resource-prometheus.yaml"
-    //                 }
-    //             }
-    //         }  
-    //     }
-    // }
-        
-   
-}
 
 
 
